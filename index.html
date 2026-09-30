@@ -1315,6 +1315,9 @@ document.addEventListener("DOMContentLoaded", function(){
   const intro=document.getElementById("coverEntry");
   if(intro) intro.remove();
   document.body.style.overflow="";
+  if (typeof showPrimerAnito === "function") {
+    showPrimerAnito();
+  }
 });
 </script>
 
