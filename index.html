@@ -554,6 +554,48 @@ html,body { scroll-behavior:smooth; }
 @media(max-width:620px){.video-samantha-ajustado{width:min(100%,390px)!important;max-height:none!important;border-width:4px!important}}
 </style>
 
+
+<style id="marco-bosque-video">
+/* Marco más profundo y decorativo para el video del Primer Añito */
+.video-samantha-ajustado{
+  position:relative !important;
+  border:8px solid rgba(255,255,255,.96) !important;
+  border-radius:28px !important;
+  box-shadow:
+    0 0 0 5px rgba(128,93,66,.18),
+    0 0 0 11px rgba(174,205,158,.22),
+    0 18px 28px rgba(56,78,45,.32),
+    0 34px 65px rgba(56,44,36,.30) !important;
+  filter:drop-shadow(0 8px 12px rgba(63,84,48,.18));
+}
+#primerAnitoView .video-wrap,
+#primerAnito .video-wrap,
+.primer-anito .video-wrap,
+.primerAnito .video-wrap{
+  position:relative !important;
+  padding:24px !important;
+  overflow:visible !important;
+  border:1px solid rgba(120,150,102,.28) !important;
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,.72),
+    0 14px 34px rgba(72,92,58,.20) !important;
+}
+@media(max-width:620px){
+  .video-samantha-ajustado{
+    border-width:5px !important;
+    box-shadow:
+      0 0 0 3px rgba(128,93,66,.16),
+      0 0 0 7px rgba(174,205,158,.20),
+      0 12px 22px rgba(56,78,45,.28),
+      0 24px 42px rgba(56,44,36,.24) !important;
+  }
+  #primerAnitoView .video-wrap,
+  #primerAnito .video-wrap,
+  .primer-anito .video-wrap,
+  .primerAnito .video-wrap{padding:14px !important;}
+}
+</style>
+
 </head>
 <body>
 
@@ -704,7 +746,7 @@ html,body { scroll-behavior:smooth; }
       <div class="sub">Adalayn Samantha · Bosque Encantado</div>
       <p><strong>8 de noviembre de 2026 · 2:30 p. m. · Casa de la abuela Lucila</strong></p>
 
-      <video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata">
+      <video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;">
         <source src="invitacion-samantha-web.mp4" type="video/mp4">
         Tu navegador no puede reproducir este video.
       </video>
