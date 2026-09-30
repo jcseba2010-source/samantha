@@ -500,6 +500,60 @@ html,body { scroll-behavior:smooth; }
 @media(max-width:650px){.rsvp-grid{grid-template-columns:1fr}.rsvp-full{grid-column:auto}}
 </style>
 
+
+<style id="primer-anito-video-ajuste">
+/* Video vertical del Primer Añito: centrado, elegante y responsive */
+#primerAnitoView video,
+#primerAnito video,
+.primer-anito video,
+.primerAnito video {
+  display:block !important;
+  width:min(100%, 430px) !important;
+  height:auto !important;
+  max-height:78vh !important;
+  aspect-ratio:auto !important;
+  object-fit:contain !important;
+  margin:0 auto !important;
+  background:transparent !important;
+  border:6px solid rgba(255,255,255,.92) !important;
+  border-radius:26px !important;
+  box-shadow:0 14px 38px rgba(87,44,76,.24) !important;
+}
+#primerAnitoView .video-wrap,
+#primerAnito .video-wrap,
+.primer-anito .video-wrap,
+.primerAnito .video-wrap {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,.85) 0 3px, transparent 4px),
+    radial-gradient(circle at 85% 28%, rgba(255,240,174,.8) 0 3px, transparent 4px),
+    linear-gradient(145deg,#f4ead8,#e4f0df 48%,#eadcf3) !important;
+  padding:14px !important;
+  border-radius:30px !important;
+}
+@media(max-width:620px){
+  #primerAnitoView video,
+  #primerAnito video,
+  .primer-anito video,
+  .primerAnito video {
+    width:min(100%, 390px) !important;
+    max-height:none !important;
+    border-width:4px !important;
+    border-radius:20px !important;
+  }
+}
+</style>
+
+
+<style>
+.video-samantha-ajustado{
+ display:block!important;width:min(100%,430px)!important;height:auto!important;
+ max-height:78vh!important;object-fit:contain!important;margin:0 auto!important;
+ background:transparent!important;border:6px solid rgba(255,255,255,.92)!important;
+ border-radius:26px!important;box-shadow:0 14px 38px rgba(87,44,76,.24)!important;
+}
+@media(max-width:620px){.video-samantha-ajustado{width:min(100%,390px)!important;max-height:none!important;border-width:4px!important}}
+</style>
+
 </head>
 <body>
 
@@ -650,7 +704,7 @@ html,body { scroll-behavior:smooth; }
       <div class="sub">Adalayn Samantha · Bosque Encantado</div>
       <p><strong>8 de noviembre de 2026 · 2:30 p. m. · Casa de la abuela Lucila</strong></p>
 
-      <video class="primer-video" controls playsinline preload="metadata">
+      <video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata">
         <source src="invitacion-samantha-web.mp4" type="video/mp4">
         Tu navegador no puede reproducir este video.
       </video>
