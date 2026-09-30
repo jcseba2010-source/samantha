@@ -596,6 +596,61 @@ html,body { scroll-behavior:smooth; }
 }
 </style>
 
+
+<style id="animales-marco-video">
+/* Animales visibles alrededor del marco del video */
+.video-bosque-marco{
+  position:relative;
+  width:min(100%,520px);
+  margin:20px auto 28px;
+  padding:26px 42px 34px;
+  border-radius:38px;
+  background:linear-gradient(145deg,#eef5e7,#fff5e9 48%,#eee4f6);
+  box-shadow:0 22px 48px rgba(57,75,45,.26);
+}
+.video-bosque-marco::before{
+  content:"🦌  🦋  🧚‍♀️";
+  position:absolute;
+  left:-22px;
+  top:35px;
+  font-size:34px;
+  line-height:1.8;
+  width:42px;
+  text-align:center;
+  white-space:pre-wrap;
+  filter:drop-shadow(0 4px 4px #0002);
+}
+.video-bosque-marco::after{
+  content:"🦉  🐰  🐻";
+  position:absolute;
+  right:-22px;
+  bottom:32px;
+  font-size:34px;
+  line-height:1.8;
+  width:42px;
+  text-align:center;
+  white-space:pre-wrap;
+  filter:drop-shadow(0 4px 4px #0002);
+}
+.video-bosque-marco .bosque-esquina{
+  position:absolute;
+  left:50%;
+  bottom:-23px;
+  transform:translateX(-50%);
+  font-size:31px;
+  white-space:nowrap;
+  z-index:3;
+  filter:drop-shadow(0 4px 4px #0002);
+}
+@media(max-width:620px){
+ .video-bosque-marco{padding:16px 24px 30px;width:calc(100% - 24px)}
+ .video-bosque-marco::before,.video-bosque-marco::after{font-size:25px;width:30px}
+ .video-bosque-marco::before{left:-12px}
+ .video-bosque-marco::after{right:-12px}
+ .video-bosque-marco .bosque-esquina{font-size:24px}
+}
+</style>
+
 </head>
 <body>
 
@@ -746,10 +801,10 @@ html,body { scroll-behavior:smooth; }
       <div class="sub">Adalayn Samantha · Bosque Encantado</div>
       <p><strong>8 de noviembre de 2026 · 2:30 p. m. · Casa de la abuela Lucila</strong></p>
 
-      <video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;">
+      <div class="video-bosque-marco"><video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;">
         <source src="invitacion-samantha-web.mp4" type="video/mp4">
         Tu navegador no puede reproducir este video.
-      </video>
+      </video><div class="bosque-esquina">🌿 🍄 ✨ 🦋 🌸 🍄 🌿</div></div>
 
       <div class="rsvp-actions">
         <button class="rsvp-btn" type="button" onclick="document.getElementById('confirmacionSamantha').scrollIntoView({behavior:'smooth'})">
