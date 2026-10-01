@@ -783,6 +783,11 @@ html,body { scroll-behavior:smooth; }
 }
 </style>
 
+<style id="buscar-familia-recuerdo-style">
+.btn-buscar-familia{width:100%;margin:0 0 12px;border:0;border-radius:12px;padding:10px 14px;background:#8b55d9;color:#fff;font-weight:900;cursor:pointer}
+#recuerdoNombreNino{width:100%;padding:12px;border:2px solid #f5bfd9;border-radius:13px;background:#fff;color:#6f3155;font:inherit;margin-bottom:12px}
+#recuerdoEdadNino[readonly]{background:#f8f3f7}
+</style>
 </head>
 <body>
 
@@ -1637,13 +1642,14 @@ document.addEventListener("DOMContentLoaded", function(){
     <p>Durante la fiesta o después, puedes subir una foto del niño y escribirle un mensaje a Samantha.</p>
 
     <label>Teléfono usado en la confirmación</label>
-    <input id="recuerdoTelefono" type="tel" autocomplete="tel" placeholder="Número de WhatsApp">
+    <input id="recuerdoTelefono" type="tel" autocomplete="tel" placeholder="Número de WhatsApp" onblur="buscarFamiliaRecuerdo()">
+    <button type="button" class="btn-buscar-familia" onclick="buscarFamiliaRecuerdo()">🔎 Buscar mis niños</button>
 
     <label>Nombre del niño</label>
-    <input id="recuerdoNombreNino" type="text" autocomplete="off" placeholder="Nombre del niño">
+    <select id="recuerdoNombreNino" onchange="seleccionarNinoRecuerdo()" disabled><option value="">Primero busca por teléfono</option></select>
 
     <label>Edad del niño</label>
-    <input id="recuerdoEdadNino" type="text" autocomplete="off" placeholder="Ej. 5 años">
+    <input id="recuerdoEdadNino" type="text" autocomplete="off" placeholder="Edad" readonly>
 
     <label>Foto del niño</label>
     <input id="recuerdoFoto" type="file" accept="image/jpeg,image/png,image/webp">
@@ -1777,21 +1783,59 @@ function cerrarRecuerdoSamantha(){
   if(m){m.hidden=true;document.body.style.overflow="";}
 }
 
-/* Preparado para conectar al registro familiar de Supabase.
-   La foto y el mensaje NO se publican automáticamente.
-   Administración deberá aprobarlos antes de hacerlos visibles.
-*/
+let familiaRecuerdoId=null;
+let ninosFamiliaRecuerdo=[];
+
+async function buscarFamiliaRecuerdo(){
+  const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
+  const estado=document.getElementById("estadoRecuerdoSamantha");
+  const sel=document.getElementById("recuerdoNombreNino");
+  const edad=document.getElementById("recuerdoEdadNino");
+  familiaRecuerdoId=null; ninosFamiliaRecuerdo=[];
+  if(sel){sel.innerHTML='<option value="">Buscando...</option>';sel.disabled=true;}
+  if(edad) edad.value="";
+  if(!telefono){estado.textContent="⚠️ Escribe el teléfono usado en la confirmación.";return;}
+  estado.textContent="🔎 Buscando la confirmación...";
+  try{
+    const {data,error}=await sb.rpc("buscar_ninos_samantha",{p_telefono:telefono});
+    if(error) throw error;
+    if(!data || !data.encontrado){
+      if(sel) sel.innerHTML='<option value="">No se encontró la confirmación</option>';
+      estado.textContent="⚠️ No encontramos una confirmación con ese teléfono."; return;
+    }
+    familiaRecuerdoId=data.familia_id;
+    ninosFamiliaRecuerdo=Array.isArray(data.ninos)?data.ninos:[];
+    if(!ninosFamiliaRecuerdo.length){estado.textContent="⚠️ Esta confirmación no tiene niños registrados.";return;}
+    sel.innerHTML='<option value="">Selecciona el niño</option>'+ninosFamiliaRecuerdo.map((n,i)=>`<option value="${i}">${n.nombre||"Niño"}</option>`).join("");
+    sel.disabled=false;
+    if(ninosFamiliaRecuerdo.length===1){sel.value="0";seleccionarNinoRecuerdo();}
+    estado.textContent="✅ Confirmación encontrada. Selecciona el niño y agrega su foto y mensaje.";
+  }catch(err){console.error(err);estado.textContent="❌ No se pudo consultar la confirmación.";}
+}
+function seleccionarNinoRecuerdo(){
+  const sel=document.getElementById("recuerdoNombreNino");
+  const edad=document.getElementById("recuerdoEdadNino");
+  const i=Number(sel?.value);
+  const n=Number.isInteger(i)?ninosFamiliaRecuerdo[i]:null;
+  if(edad) edad.value=n?.edad||"";
+}
+
+/* La foto y el mensaje quedan pendientes hasta aprobación administrativa. */
 async function guardarRecuerdoSamantha(){
   const estado=document.getElementById("estadoRecuerdoSamantha");
   const boton=document.querySelector(".btn-guardar-recuerdo");
   const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
-  const nombre=(document.getElementById("recuerdoNombreNino")?.value||"").trim();
-  const edad=(document.getElementById("recuerdoEdadNino")?.value||"").trim();
+  const selNino=document.getElementById("recuerdoNombreNino");
+  const idx=Number(selNino?.value);
+  const ninoSeleccionado=Number.isInteger(idx)?ninosFamiliaRecuerdo[idx]:null;
+  const nombre=(ninoSeleccionado?.nombre||"").trim();
+  const edad=String(ninoSeleccionado?.edad||"").trim();
   const mensaje=(document.getElementById("recuerdoMensaje")?.value||"").trim();
   const foto=document.getElementById("recuerdoFoto")?.files?.[0];
   const autoriza=!!document.getElementById("recuerdoAutoriza")?.checked;
 
-  if(!telefono || !nombre){ estado.textContent="⚠️ Escribe el teléfono de la confirmación y el nombre del niño."; return; }
+  if(!telefono || !familiaRecuerdoId){ estado.textContent="⚠️ Busca primero la confirmación usando el teléfono registrado."; return; }
+  if(!nombre){ estado.textContent="⚠️ Selecciona el niño registrado."; return; }
   if(!edad){ estado.textContent="⚠️ Escribe la edad del niño."; return; }
   if(!foto){ estado.textContent="⚠️ Selecciona una foto del niño."; return; }
   if(!["image/jpeg","image/png","image/webp"].includes(foto.type)){ estado.textContent="⚠️ La foto debe ser JPG, PNG o WEBP."; return; }
@@ -1811,6 +1855,7 @@ async function guardarRecuerdoSamantha(){
     if(upError) throw upError;
 
     const {error:dbError}=await sb.from("samantha_primer_anito_recuerdos").insert({
+      familia_id:familiaRecuerdoId,
       nombre_nino:nombre,
       edad_texto:edad,
       foto_url:ruta,
@@ -1826,7 +1871,9 @@ async function guardarRecuerdoSamantha(){
     }
 
     estado.textContent="🌸 Recuerdo enviado. Quedó pendiente de aprobación antes de aparecer en el libro de Samantha.";
-    ["recuerdoTelefono","recuerdoNombreNino","recuerdoEdadNino","recuerdoMensaje"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
+    ["recuerdoTelefono","recuerdoEdadNino","recuerdoMensaje"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
+    const sn=document.getElementById("recuerdoNombreNino"); if(sn){sn.innerHTML='<option value="">Primero busca por teléfono</option>';sn.disabled=true;}
+    familiaRecuerdoId=null; ninosFamiliaRecuerdo=[];
     const fi=document.getElementById("recuerdoFoto"); if(fi)fi.value="";
     const au=document.getElementById("recuerdoAutoriza"); if(au)au.checked=false;
   }catch(err){
