@@ -1612,10 +1612,10 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 
-<button id="btnDejarRecuerdoSamantha" type="button" hidden
+<button id="btnDejarRecuerdoSamantha" type="button"
         onclick="abrirRecuerdoSamantha()"
         style="border:0;border-radius:999px;padding:12px 18px;font-weight:900;color:#fff;
-        background:linear-gradient(90deg,#7b55c7,#e24a98);cursor:pointer;margin:14px auto;display:none">
+        background:linear-gradient(90deg,#7b55c7,#e24a98);cursor:pointer;margin:14px auto;display:block">
   🌸 Dejar un recuerdo para Samantha
 </button>
 <!-- ===== RECUERDOS DE LOS AMIGUITOS DE SAMANTHA =====
@@ -1642,8 +1642,11 @@ document.addEventListener("DOMContentLoaded", function(){
     <label>Nombre del niño</label>
     <input id="recuerdoNombreNino" type="text" autocomplete="off" placeholder="Nombre del niño">
 
+    <label>Edad del niño</label>
+    <input id="recuerdoEdadNino" type="text" autocomplete="off" placeholder="Ej. 5 años">
+
     <label>Foto del niño</label>
-    <input id="recuerdoFoto" type="file" accept="image/*">
+    <input id="recuerdoFoto" type="file" accept="image/jpeg,image/png,image/webp">
 
     <label>Mensaje para Samantha</label>
     <textarea id="recuerdoMensaje" maxlength="500" placeholder="Escribe aquí su mensaje para Samantha..."></textarea>
@@ -1780,32 +1783,58 @@ function cerrarRecuerdoSamantha(){
 */
 async function guardarRecuerdoSamantha(){
   const estado=document.getElementById("estadoRecuerdoSamantha");
+  const boton=document.querySelector(".btn-guardar-recuerdo");
   const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
   const nombre=(document.getElementById("recuerdoNombreNino")?.value||"").trim();
+  const edad=(document.getElementById("recuerdoEdadNino")?.value||"").trim();
   const mensaje=(document.getElementById("recuerdoMensaje")?.value||"").trim();
   const foto=document.getElementById("recuerdoFoto")?.files?.[0];
   const autoriza=!!document.getElementById("recuerdoAutoriza")?.checked;
 
-  if(!telefono || !nombre){
-    estado.textContent="⚠️ Escribe el teléfono de la confirmación y el nombre del niño.";
-    return;
-  }
-  if(!foto){
-    estado.textContent="⚠️ Selecciona una foto del niño.";
-    return;
-  }
-  if(!mensaje){
-    estado.textContent="⚠️ Escribe un mensaje para Samantha.";
-    return;
-  }
-  if(!autoriza){
-    estado.textContent="⚠️ Para enviar el recuerdo debes autorizar la publicación indicada.";
-    return;
-  }
+  if(!telefono || !nombre){ estado.textContent="⚠️ Escribe el teléfono de la confirmación y el nombre del niño."; return; }
+  if(!edad){ estado.textContent="⚠️ Escribe la edad del niño."; return; }
+  if(!foto){ estado.textContent="⚠️ Selecciona una foto del niño."; return; }
+  if(!["image/jpeg","image/png","image/webp"].includes(foto.type)){ estado.textContent="⚠️ La foto debe ser JPG, PNG o WEBP."; return; }
+  if(foto.size > 5*1024*1024){ estado.textContent="⚠️ La foto no debe superar 5 MB."; return; }
+  if(!mensaje){ estado.textContent="⚠️ Escribe un mensaje para Samantha."; return; }
+  if(!autoriza){ estado.textContent="⚠️ Para enviar el recuerdo debes autorizar la publicación indicada."; return; }
 
-  /* No simulamos un guardado: hasta crear la tabla/bucket seguro,
-     se mantiene el contenido local y oculto. */
-  estado.textContent="🌸 Formulario listo. Falta activar el almacenamiento seguro para enviar el recuerdo.";
+  boton.disabled=true;
+  estado.textContent="⏳ Subiendo la foto y guardando el recuerdo...";
+
+  try{
+    const ext=(foto.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+    const seguro=nombre.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").toLowerCase() || "nino";
+    const ruta=`pendientes/${Date.now()}-${seguro}.${ext}`;
+
+    const {error:upError}=await sb.storage.from("samantha-recuerdos").upload(ruta,foto,{cacheControl:"3600",upsert:false,contentType:foto.type});
+    if(upError) throw upError;
+
+    const {error:dbError}=await sb.from("samantha_primer_anito_recuerdos").insert({
+      nombre_nino:nombre,
+      edad_texto:edad,
+      foto_url:ruta,
+      mensaje:mensaje,
+      autoriza_publicacion:true,
+      estado:"PENDIENTE",
+      visible_libro:false
+    });
+
+    if(dbError){
+      await sb.storage.from("samantha-recuerdos").remove([ruta]).catch(()=>{});
+      throw dbError;
+    }
+
+    estado.textContent="🌸 Recuerdo enviado. Quedó pendiente de aprobación antes de aparecer en el libro de Samantha.";
+    ["recuerdoTelefono","recuerdoNombreNino","recuerdoEdadNino","recuerdoMensaje"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
+    const fi=document.getElementById("recuerdoFoto"); if(fi)fi.value="";
+    const au=document.getElementById("recuerdoAutoriza"); if(au)au.checked=false;
+  }catch(err){
+    console.error(err);
+    estado.textContent="❌ No se pudo enviar el recuerdo. Revisa la conexión e inténtalo nuevamente.";
+  }finally{
+    boton.disabled=false;
+  }
 }
 </script>
 </body>
