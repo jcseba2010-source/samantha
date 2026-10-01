@@ -949,10 +949,7 @@ html,body { scroll-behavior:smooth; }
         <button class="rsvp-btn" type="button" onclick="document.getElementById('confirmacionSamantha').scrollIntoView({behavior:'smooth'})">
           🌸 Confirmar asistencia
         </button>
-        <button class="rsvp-btn whatsapp-samantha-btn" type="button" onclick="compartirSamantha()">
-          💚 Compartir por WhatsApp
-        </button>
-      </div>
+</div>
     </div>
 
     <div class="rsvp-card" id="confirmacionSamantha">
@@ -1811,28 +1808,5 @@ async function guardarRecuerdoSamantha(){
   estado.textContent="🌸 Formulario listo. Falta activar el almacenamiento seguro para enviar el recuerdo.";
 }
 </script>
-
-<style id="whatsapp-samantha-estilo">
-.whatsapp-samantha-btn{
-  background:linear-gradient(90deg,#25D366,#128C7E) !important;
-  box-shadow:0 8px 20px rgba(18,140,126,.28) !important;
-}
-</style>
-<script id="compartir-whatsapp-samantha">
-function compartirSamantha(){
-  const enlace="https://jcseba2010-source.github.io/samantha/";
-  const mensaje=`🌳✨ Estás invitado al Primer Añito de Samantha ✨🌳
-
-🎂 Adalayn Samantha
-📅 8 de noviembre de 2026
-🕝 2:30 p. m.
-🏡 Casa de la abuela Lucila
-
-💕 Abre nuestra invitación y confirma tu asistencia:
-${enlace}`;
-  window.open("https://wa.me/?text="+encodeURIComponent(mensaje),"_blank","noopener,noreferrer");
-}
-</script>
-
 </body>
 </html>
