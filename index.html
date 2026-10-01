@@ -1546,5 +1546,138 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 </script>
 
+
+<button id="btnDejarRecuerdoSamantha" type="button" hidden
+        onclick="abrirRecuerdoSamantha()"
+        style="border:0;border-radius:999px;padding:12px 18px;font-weight:900;color:#fff;
+        background:linear-gradient(90deg,#7b55c7,#e24a98);cursor:pointer;margin:14px auto;display:none">
+  🌸 Dejar un recuerdo para Samantha
+</button>
+
+<!-- ===== RECUERDOS DE LOS AMIGUITOS DE SAMANTHA =====
+     Oculto por defecto. Solo se muestran recuerdos aprobados por administración.
+-->
+<section id="recuerdosAmiguitosSamantha" hidden aria-hidden="true">
+  <div class="recuerdos-amiguitos-card">
+    <h2>🦋 Mis amiguitos de mi Primer Añito 🌳</h2>
+    <p class="recuerdos-subtitulo">Fotos y mensajes que mis amiguitos dejaron para recordar este día tan especial.</p>
+    <div id="galeriaRecuerdosAprobados" class="galeria-recuerdos"></div>
+  </div>
+</section>
+
+<!-- Modal privado para que una familia deje el recuerdo después de confirmar -->
+<div id="modalRecuerdoSamantha" class="modal-recuerdo-samantha" hidden>
+  <div class="modal-recuerdo-contenido">
+    <button type="button" class="cerrar-recuerdo" onclick="cerrarRecuerdoSamantha()" aria-label="Cerrar">×</button>
+    <h2>🌸 Dejar un recuerdo para Samantha</h2>
+    <p>Durante la fiesta o después, puedes subir una foto del niño y escribirle un mensaje a Samantha.</p>
+
+    <label>Teléfono usado en la confirmación</label>
+    <input id="recuerdoTelefono" type="tel" autocomplete="tel" placeholder="Número de WhatsApp">
+
+    <label>Nombre del niño</label>
+    <input id="recuerdoNombreNino" type="text" autocomplete="off" placeholder="Nombre del niño">
+
+    <label>Foto del niño</label>
+    <input id="recuerdoFoto" type="file" accept="image/*">
+
+    <label>Mensaje para Samantha</label>
+    <textarea id="recuerdoMensaje" maxlength="500" placeholder="Escribe aquí su mensaje para Samantha..."></textarea>
+
+    <label class="autoriza-recuerdo">
+      <input id="recuerdoAutoriza" type="checkbox">
+      Autorizo publicar la foto, nombre y mensaje del niño en el libro de Samantha.
+    </label>
+
+    <button type="button" class="btn-guardar-recuerdo" onclick="guardarRecuerdoSamantha()">💌 Guardar recuerdo</button>
+    <div id="estadoRecuerdoSamantha" class="estado-recuerdo" role="status"></div>
+  </div>
+</div>
+
+<style id="estilos-recuerdos-amiguitos">
+#recuerdosAmiguitosSamantha{max-width:1000px;margin:24px auto}
+.recuerdos-amiguitos-card{
+  padding:24px;border-radius:28px;
+  background:linear-gradient(145deg,#f1f7e8,#fff7ec 48%,#f2e7fa);
+  border:3px solid #fff;box-shadow:0 18px 45px #513b5a2b;text-align:center
+}
+.recuerdos-amiguitos-card h2{color:#9b4779;margin:0 0 7px}
+.recuerdos-subtitulo{color:#72586c}
+.galeria-recuerdos{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:20px}
+.modal-recuerdo-samantha{
+  position:fixed;inset:0;z-index:10050;background:#25182b99;
+  display:flex;align-items:center;justify-content:center;padding:18px
+}
+.modal-recuerdo-samantha[hidden],#recuerdosAmiguitosSamantha[hidden]{display:none!important}
+.modal-recuerdo-contenido{
+  position:relative;width:min(560px,100%);max-height:92vh;overflow:auto;
+  background:linear-gradient(160deg,#fff,#fff3f8 60%,#f1ebff);
+  border:3px solid #fff;border-radius:25px;padding:24px;
+  box-shadow:0 24px 70px #21162a55
+}
+.modal-recuerdo-contenido h2{margin-top:0;color:#bd397d}
+.modal-recuerdo-contenido label{display:block;font-weight:900;margin:13px 0 6px;color:#75445f}
+.modal-recuerdo-contenido input[type="text"],
+.modal-recuerdo-contenido input[type="tel"],
+.modal-recuerdo-contenido input[type="file"],
+.modal-recuerdo-contenido textarea{
+ width:100%;padding:11px;border:2px solid #f0c7db;border-radius:12px;background:#fff;font:inherit
+}
+.modal-recuerdo-contenido textarea{min-height:115px;resize:vertical}
+.autoriza-recuerdo{display:flex!important;gap:9px;align-items:flex-start;font-weight:700!important}
+.cerrar-recuerdo{position:absolute;right:13px;top:9px;border:0;background:transparent;font-size:31px;color:#9b4779;cursor:pointer}
+.btn-guardar-recuerdo{
+ width:100%;margin-top:15px;border:0;border-radius:999px;padding:13px;
+ color:#fff;font-weight:900;font-size:16px;cursor:pointer;
+ background:linear-gradient(90deg,#7b55c7,#e24a98)
+}
+.estado-recuerdo{margin-top:10px;font-weight:800}
+</style>
+
+<script id="logica-recuerdos-amiguitos">
+function abrirRecuerdoSamantha(){
+  const m=document.getElementById("modalRecuerdoSamantha");
+  if(m){m.hidden=false;document.body.style.overflow="hidden";}
+}
+function cerrarRecuerdoSamantha(){
+  const m=document.getElementById("modalRecuerdoSamantha");
+  if(m){m.hidden=true;document.body.style.overflow="";}
+}
+
+/* Preparado para conectar al registro familiar de Supabase.
+   La foto y el mensaje NO se publican automáticamente.
+   Administración deberá aprobarlos antes de hacerlos visibles.
+*/
+async function guardarRecuerdoSamantha(){
+  const estado=document.getElementById("estadoRecuerdoSamantha");
+  const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
+  const nombre=(document.getElementById("recuerdoNombreNino")?.value||"").trim();
+  const mensaje=(document.getElementById("recuerdoMensaje")?.value||"").trim();
+  const foto=document.getElementById("recuerdoFoto")?.files?.[0];
+  const autoriza=!!document.getElementById("recuerdoAutoriza")?.checked;
+
+  if(!telefono || !nombre){
+    estado.textContent="⚠️ Escribe el teléfono de la confirmación y el nombre del niño.";
+    return;
+  }
+  if(!foto){
+    estado.textContent="⚠️ Selecciona una foto del niño.";
+    return;
+  }
+  if(!mensaje){
+    estado.textContent="⚠️ Escribe un mensaje para Samantha.";
+    return;
+  }
+  if(!autoriza){
+    estado.textContent="⚠️ Para enviar el recuerdo debes autorizar la publicación indicada.";
+    return;
+  }
+
+  /* No simulamos un guardado: hasta crear la tabla/bucket seguro,
+     se mantiene el contenido local y oculto. */
+  estado.textContent="🌸 Formulario listo. Falta activar el almacenamiento seguro para enviar el recuerdo.";
+}
+</script>
+
 </body>
 </html>
