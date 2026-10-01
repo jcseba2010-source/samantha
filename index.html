@@ -1844,6 +1844,8 @@ async function guardarRecuerdoSamantha(){
   if(!autoriza){ estado.textContent="⚠️ Para enviar el recuerdo debes autorizar la publicación indicada."; return; }
 
   boton.disabled=true;
+  boton.dataset.textoOriginal=boton.innerHTML;
+  boton.innerHTML="🌸 Guardando...";
   estado.textContent="⏳ Subiendo la foto y guardando el recuerdo...";
 
   try{
@@ -1878,9 +1880,14 @@ async function guardarRecuerdoSamantha(){
     const au=document.getElementById("recuerdoAutoriza"); if(au)au.checked=false;
   }catch(err){
     console.error(err);
-    estado.textContent="❌ No se pudo enviar el recuerdo. Revisa la conexión e inténtalo nuevamente.";
+    if(err?.code === "23505" || String(err?.message||"").toLowerCase().includes("uq_recuerdo_familia_nino") || String(err?.message||"").toLowerCase().includes("duplicate key")){
+      estado.textContent=`🌸 ${nombre} ya dejó su recuerdo para Samantha.`;
+    }else{
+      estado.textContent="❌ No se pudo enviar el recuerdo. Revisa la conexión e inténtalo nuevamente.";
+    }
   }finally{
     boton.disabled=false;
+    boton.innerHTML=boton.dataset.textoOriginal || "💌 Guardar recuerdo";
   }
 }
 </script>
