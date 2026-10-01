@@ -1619,6 +1619,35 @@ document.addEventListener("DOMContentLoaded", function(){
   🌸 Dejar un recuerdo para Samantha
 </button>
 
+
+<!-- Botón para compartir la invitación de Samantha -->
+<div id="compartirInvitacionSamantha" style="text-align:center;margin:20px auto 28px">
+  <button type="button" onclick="compartirSamantha()"
+    style="border:0;border-radius:999px;padding:14px 22px;font-size:16px;font-weight:900;
+    color:#fff;background:linear-gradient(90deg,#25D366,#18a84d);cursor:pointer;
+    box-shadow:0 9px 22px #176d3938">
+    💚 Compartir invitación por WhatsApp
+  </button>
+</div>
+
+<script id="compartir-whatsapp-samantha">
+function compartirSamantha(){
+  const enlace="https://jcseba2010-source.github.io/samantha/";
+  const mensaje=`🌳✨ Estás invitado al Primer Añito de Samantha ✨🌳
+
+🎂 Adalayn Samantha
+📅 8 de noviembre de 2026
+🕝 2:30 p. m.
+🏡 Casa de la abuela Lucila
+
+💕 Abre nuestra invitación y confirma tu asistencia:
+${enlace}`;
+
+  const url="https://wa.me/?text="+encodeURIComponent(mensaje);
+  window.open(url,"_blank","noopener,noreferrer");
+}
+</script>
+
 <!-- ===== RECUERDOS DE LOS AMIGUITOS DE SAMANTHA =====
      Oculto por defecto. Solo se muestran recuerdos aprobados por administración.
 -->
