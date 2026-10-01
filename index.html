@@ -1810,5 +1810,31 @@ async function guardarRecuerdoSamantha(){
 }
 </script>
 
+
+<script id="vista-previa-tarjetas-amiguitos">
+/* VISTA DE PRUEBA: no guarda ni publica datos reales */
+document.addEventListener("DOMContentLoaded", function(){
+  const seccion=document.getElementById("recuerdosAmiguitosSamantha");
+  const galeria=document.getElementById("galeriaRecuerdosAprobados");
+  if(!seccion || !galeria || typeof crearTarjetaAmiguito!=="function") return;
+
+  const ejemplos=[
+    {nombre_nino:"Valentina",edad_texto:"5 años",mensaje:"Samantha, que siempre seas muy feliz.",foto_url:""},
+    {nombre_nino:"Samuel",edad_texto:"7 años",mensaje:"Feliz primer añito, Samantha. Con mucho cariño.",foto_url:""},
+    {nombre_nino:"Sofía",edad_texto:"4 años",mensaje:"Que tu vida esté llena de magia y sonrisas.",foto_url:""}
+  ];
+
+  galeria.innerHTML="";
+  ejemplos.forEach((r,i)=>galeria.appendChild(crearTarjetaAmiguito(r,i)));
+  seccion.hidden=false;
+  seccion.setAttribute("aria-hidden","false");
+
+  const aviso=document.createElement("div");
+  aviso.style.cssText="display:inline-block;margin:0 auto 14px;padding:7px 13px;border-radius:999px;background:#fff1bd;color:#765c20;font-weight:900;font-size:12px";
+  aviso.textContent="👀 VISTA DE PRUEBA · Estos nombres y mensajes son ficticios";
+  galeria.parentNode.insertBefore(aviso,galeria);
+});
+</script>
+
 </body>
 </html>
