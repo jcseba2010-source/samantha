@@ -651,6 +651,73 @@ html,body { scroll-behavior:smooth; }
 }
 </style>
 
+
+<style id="marco-bosque-visible-final">
+/* Marco real y visible alrededor del video */
+.video-bosque-marco{
+  position:relative !important;
+  width:min(100%,590px) !important;
+  margin:24px auto 34px !important;
+  padding:30px 72px 42px !important;
+  overflow:visible !important;
+  border-radius:42px !important;
+  border:3px solid rgba(255,255,255,.95) !important;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(255,255,255,.95) 0 3px,transparent 4px),
+    radial-gradient(circle at 88% 24%,rgba(255,225,135,.85) 0 3px,transparent 4px),
+    linear-gradient(145deg,#dceccb,#fff1df 48%,#eadcf5) !important;
+  box-shadow:
+    inset 0 0 34px rgba(255,255,255,.8),
+    0 18px 38px rgba(57,75,45,.26),
+    0 34px 65px rgba(76,52,67,.20) !important;
+}
+.video-bosque-marco::before,
+.video-bosque-marco::after{content:none !important;}
+
+.video-bosque-marco .animal-marco{
+  position:absolute;
+  z-index:8;
+  font-size:46px;
+  line-height:1;
+  filter:drop-shadow(0 5px 5px rgba(54,52,38,.24));
+  pointer-events:none;
+}
+.video-bosque-marco .venado{left:9px;bottom:76px}
+.video-bosque-marco .conejo{right:11px;bottom:72px}
+.video-bosque-marco .buho{right:13px;top:62px}
+.video-bosque-marco .osito{left:10px;top:65px}
+.video-bosque-marco .mariposa1{left:18px;top:12px;font-size:30px}
+.video-bosque-marco .mariposa2{right:22px;top:15px;font-size:28px}
+.video-bosque-marco .hada{right:7px;top:50%;font-size:34px}
+.video-bosque-marco .bosque-esquina{
+  position:absolute !important;left:50% !important;bottom:5px !important;
+  transform:translateX(-50%) !important;font-size:27px !important;
+  white-space:nowrap !important;z-index:8 !important;
+}
+.video-bosque-marco .video-samantha-ajustado{
+  width:min(100%,430px) !important;
+  position:relative !important;
+  z-index:4 !important;
+  margin:0 auto !important;
+}
+@media(max-width:620px){
+  .video-bosque-marco{
+    width:calc(100% - 8px) !important;
+    padding:20px 43px 38px !important;
+    border-radius:30px !important;
+  }
+  .video-bosque-marco .animal-marco{font-size:31px}
+  .video-bosque-marco .venado{left:5px;bottom:65px}
+  .video-bosque-marco .conejo{right:5px;bottom:62px}
+  .video-bosque-marco .buho{right:6px;top:60px}
+  .video-bosque-marco .osito{left:5px;top:62px}
+  .video-bosque-marco .mariposa1{left:10px;top:9px;font-size:23px}
+  .video-bosque-marco .mariposa2{right:12px;top:10px;font-size:22px}
+  .video-bosque-marco .hada{right:4px;font-size:26px}
+  .video-bosque-marco .bosque-esquina{font-size:21px !important}
+}
+</style>
+
 </head>
 <body>
 
@@ -801,7 +868,14 @@ html,body { scroll-behavior:smooth; }
       <div class="sub">Adalayn Samantha · Bosque Encantado</div>
       <p><strong>8 de noviembre de 2026 · 2:30 p. m. · Casa de la abuela Lucila</strong></p>
 
-      <div class="video-bosque-marco"><video class="video-samantha-ajustado" class="primer-video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;">
+      <div class="video-bosque-marco">
+        <span class="animal-marco mariposa1">🦋</span>
+        <span class="animal-marco mariposa2">🦋</span>
+        <span class="animal-marco osito">🐻</span>
+        <span class="animal-marco buho">🦉</span>
+        <span class="animal-marco venado">🦌</span>
+        <span class="animal-marco conejo">🐰</span>
+        <span class="animal-marco hada">🧚‍♀️</span><video class="video-samantha-ajustado primer-video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;">
         <source src="invitacion-samantha-web.mp4" type="video/mp4">
         Tu navegador no puede reproducir este video.
       </video><div class="bosque-esquina">🌿 🍄 ✨ 🦋 🌸 🍄 🌿</div></div>
