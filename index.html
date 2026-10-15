@@ -788,6 +788,37 @@ html,body { scroll-behavior:smooth; }
 #recuerdoNombreNino{width:100%;padding:12px;border:2px solid #f5bfd9;border-radius:13px;background:#fff;color:#6f3155;font:inherit;margin-bottom:12px}
 #recuerdoEdadNino[readonly]{background:#f8f3f7}
 </style>
+<style id="family-chart-style">
+#familyTreePage .family-wrap{max-width:1120px}
+#familyTreePage .family-hero{padding:24px 18px 12px}
+#familyTreePage .family-hero h1{display:inline-block;background:#d59149;color:#fff8ee;border-radius:5px;padding:13px 36px;box-shadow:0 6px 0 #efc48f;font-size:clamp(25px,4vw,39px);margin:0 0 18px;letter-spacing:.4px}
+#familyTreePage .family-hero p{font-size:17px}
+.family-chart-scroll{overflow-x:auto;overscroll-behavior-x:contain;background:linear-gradient(180deg,#fffdf9,#fff9f2);border:1px solid #f0dcc5;border-radius:24px;margin:12px 0;scrollbar-width:thin;scrollbar-color:#a8ba88 #fff4e6}
+.family-chart{min-width:880px;width:100%;height:620px;position:relative}
+.family-branches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.family-parents{position:absolute;top:25px;left:25%;width:50%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.family-children{position:absolute;top:342px;left:0;width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+#familyTreePage .family-member{width:auto;min-width:0;max-width:none;background:none;border:0;box-shadow:none;padding:0 10px;text-align:center;position:relative}
+#familyTreePage .family-member .placeholder{width:140px;height:140px;margin:0 auto;border-radius:50%;border:5px solid white;outline:2px solid #c99d7a;background:#f9d5dc;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;box-sizing:border-box;box-shadow:0 4px 14px #8c68421a;font-size:55px}
+#familyTreePage .family-member .placeholder:focus-visible{outline:4px solid #854aa9}
+#familyTreePage .family-member .placeholder img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#familyTreePage .family-member .photo-hint{font:700 11px system-ui;color:#704e48;margin-top:3px}
+#familyTreePage .family-member.member-papa .placeholder{background:#cde8ec}
+#familyTreePage .family-member.member-andrey .placeholder{background:#e8e0f5}
+#familyTreePage .family-member.member-samuel .placeholder{background:#dcebd6}
+#familyTreePage .family-member.member-estefania .placeholder{background:#ffe6d2}
+#familyTreePage .family-member.member-adalayn .placeholder{background:#fbd4e8;outline-color:#d187ad}
+.member-ribbon{position:relative;display:table;background:#b85765;color:white;font-size:13px;font-weight:900;line-height:1.3;padding:7px 13px;margin:-5px auto 12px;min-width:95px;max-width:170px;z-index:1}
+.member-ribbon:before,.member-ribbon:after{content:"";position:absolute;top:4px;border:13px solid #a34251;z-index:-1}
+.member-ribbon:before{left:-17px;border-left-color:transparent}
+.member-ribbon:after{right:-17px;border-right-color:transparent}
+#familyTreePage .family-member h3{font:800 17px/1.35 Georgia,serif;color:#62423e;margin:0 0 4px;overflow-wrap:anywhere}
+.member-lastname{font-size:13px;line-height:1.4;color:#795f58;margin:0}
+.member-dedication{font-size:12px;line-height:1.4;color:#a33d70;margin:8px 0 0}
+.family-root{position:absolute;bottom:15px;text-align:center;width:100%;font:italic 18px Georgia,serif;color:#6b8450}
+.family-swipe-hint{display:none;color:#795c63;font-size:13px;text-align:center}
+@media(max-width:900px){.family-swipe-hint{display:block}#familyTreePage .family-wrap{padding:14px 10px}}
+</style>
 </head>
 <body>
 
@@ -831,8 +862,8 @@ html,body { scroll-behavior:smooth; }
   <div class="birth-extra">
    <div class="birth-memory"><span class="ico">🩸</span><b>Mi grupo sanguíneo</b><input data-birth="sangre" placeholder="Por completar"></div>
    <div class="birth-memory"><span class="ico">🤍</span><b>Quién me acompañó</b><input data-birth="acompanante" placeholder="Por completar"></div>
-   <div class="birth-memory"><span class="ico">💗</span><b>Mamá</b><input data-birth="mama" value="Neyla"></div>
-   <div class="birth-memory"><span class="ico">💙</span><b>Papá</b><input data-birth="papa" value="Julio"></div>
+   <div class="birth-memory"><span class="ico">💗</span><b>Mamá</b><input data-birth="mama" value="Neyla Militza Caballero Gonzales"></div>
+   <div class="birth-memory"><span class="ico">💙</span><b>Papá</b><input data-birth="papa" value="Julio Cesar Contreras Vargas"></div>
   </div>
 
   <div class="birth-keepsakes">
@@ -874,43 +905,51 @@ html,body { scroll-behavior:smooth; }
       <p>💗 Las personas que llenan mi vida de amor 💗</p>
     </div>
 
-    <div class="tree">
-      <div class="tree-label">Mis papás</div>
-      <div class="generation">
-        <div class="person">
-          <div class="placeholder" data-family-photo="mama">💗</div>
-          <h3>Mamá</h3><small>Neyla</small>
-        </div>
-        <div class="person">
-          <div class="placeholder" data-family-photo="papa">💙</div>
-          <h3>Papá</h3><small>Julio</small>
-        </div>
-      </div>
-
-      <div class="tree-label">Mis hermanos</div>
-      <div class="generation">
-        <div class="person">
-          <div class="placeholder" data-family-photo="andrey">👦</div>
-          <h3>Andrey</h3><small>Mi hermano</small>
-        </div>
-        <div class="person">
-          <div class="placeholder" data-family-photo="samuel">👦</div>
-          <h3>Samuel</h3><small>Mi hermano</small>
-        </div>
-        <div class="person">
-          <div class="placeholder" data-family-photo="estefania">👧</div>
-          <h3>Estefanía</h3><small>Mi hermana</small>
-        </div>
-      </div>
-
-      <div class="tree-label">Y aquí estoy yo</div>
-      <div class="generation">
-        <div class="person">
-          <div class="placeholder" data-family-photo="adalayn">👶🏻</div>
-          <h3>Adalayn Samantha</h3><small>La princesa de la familia</small>
-        </div>
-      </div>
+    <div class="family-chart-scroll" tabindex="0" aria-label="Árbol familiar. Desliza horizontalmente para ver toda la familia.">
+    <div class="family-chart">
+      <svg class="family-branches" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="#7c9e62" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M375 248 V272 H625 V248 M500 272 V306 M125 342 V306 H875 V342 M375 306 V342 M625 306 V342"/>
+        </g>
+        <g fill="#9dbf70">
+          <ellipse cx="480" cy="287" rx="15" ry="6" transform="rotate(32 480 287)"/>
+          <ellipse cx="520" cy="293" rx="15" ry="6" transform="rotate(-32 520 293)"/>
+          <ellipse cx="270" cy="306" rx="14" ry="6" transform="rotate(-32 270 306)"/>
+          <ellipse cx="735" cy="306" rx="14" ry="6" transform="rotate(32 735 306)"/>
+          <ellipse cx="145" cy="328" rx="12" ry="5" transform="rotate(-35 145 328)"/>
+          <ellipse cx="855" cy="328" rx="12" ry="5" transform="rotate(35 855 328)"/>
+        </g>
+      </svg>
+      <div class="family-parents"><article class="person family-member member-mama">
+ <div class="placeholder" data-family-photo="mama" role="button" tabindex="0" aria-label="Agregar foto de Neyla Militza"><span>💗</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Mamá</div>
+ <h3>Neyla Militza</h3><p class="member-lastname">Caballero Gonzales</p>
+ </article><article class="person family-member member-papa">
+ <div class="placeholder" data-family-photo="papa" role="button" tabindex="0" aria-label="Agregar foto de Julio Cesar"><span>💙</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Papá</div>
+ <h3>Julio Cesar</h3><p class="member-lastname">Contreras Vargas</p>
+ </article></div>
+      <div class="family-children"><article class="person family-member member-andrey">
+ <div class="placeholder" data-family-photo="andrey" role="button" tabindex="0" aria-label="Agregar foto de Andrey Sebastián"><span>👦</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Mi hermano</div>
+ <h3>Andrey Sebastián</h3><p class="member-lastname">Contreras Caballero</p>
+ </article><article class="person family-member member-samuel">
+ <div class="placeholder" data-family-photo="samuel" role="button" tabindex="0" aria-label="Agregar foto de Samuel Alejandro"><span>👦</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Mi hermano</div>
+ <h3>Samuel Alejandro</h3><p class="member-lastname">Contreras Caballero</p>
+ </article><article class="person family-member member-estefania">
+ <div class="placeholder" data-family-photo="estefania" role="button" tabindex="0" aria-label="Agregar foto de Yuliana Estefanía"><span>🌸</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Mi hermana y madrina</div>
+ <h3>Yuliana Estefanía</h3><p class="member-dedication">Mi querida hermana y madrina</p>
+ </article><article class="person family-member member-adalayn">
+ <div class="placeholder" data-family-photo="adalayn" role="button" tabindex="0" aria-label="Agregar foto de Adalayn Samantha"><span>👶🏻</span><small class="photo-hint">Agregar foto</small></div>
+ <div class="member-ribbon">Aquí estoy yo</div>
+ <h3>Adalayn Samantha</h3><p class="member-lastname">Contreras Caballero</p><p class="member-dedication">La princesa de la familia</p>
+ </article></div>
+      <div class="family-root">🌿 Nuestras raíces, mi historia 🌿</div>
     </div>
+    </div>
+    <p class="family-swipe-hint">En el celular, desliza el árbol hacia los lados para ver a toda la familia.</p>
 
     <div class="family-photo">
       <h2 style="margin-top:0;color:#c52a76">📸 Nuestra foto familiar</h2>
@@ -1396,6 +1435,7 @@ function loadFamilyTree(){
   });
 }
 document.querySelectorAll('[data-family-photo]').forEach(box=>{
+  box.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();box.click();}});
   box.addEventListener('click',()=>{
     familyPhotoType=box.dataset.familyPhoto;
     const inp=document.getElementById('familyPhotoInput');
