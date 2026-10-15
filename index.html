@@ -1648,8 +1648,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
     <label>Teléfono usado en la confirmación</label>
     <input id="recuerdoTelefono" type="tel" autocomplete="tel" placeholder="Número de WhatsApp" oninput="invalidarBusquedaRecuerdo()">
-    <label for="recuerdoAdulto">Nombre del adulto responsable, como se registró</label>
-    <input id="recuerdoAdulto" type="text" maxlength="100" autocomplete="name" placeholder="Nombre del adulto responsable" oninput="invalidarBusquedaRecuerdo()">
     <button type="button" class="btn-buscar-familia" onclick="buscarFamiliaRecuerdo()">🔎 Buscar mis niños</button>
 
     <label>Nombre del niño</label>
@@ -1808,19 +1806,18 @@ async function buscarFamiliaRecuerdo(){
   const edad=document.getElementById("recuerdoEdadNino");
   if(boton && estado)boton.insertAdjacentElement("afterend",estado);
   const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
-  const adulto=(document.getElementById("recuerdoAdulto")?.value||"").trim();
   familiaRecuerdoId=null;ninosFamiliaRecuerdo=[];
   sel.replaceChildren(new Option("Primero busca tu confirmación",""));sel.disabled=true;edad.value="";
-  if(!telefono || !adulto){estado.textContent="⚠️ Completa el teléfono y el nombre del adulto de la misma confirmación.";return;}
+  if(!telefono){estado.textContent="⚠️ Escribe el teléfono usado en la confirmación.";return;}
   const version=++busquedaRecuerdoVersion;
   const textoBoton=boton.textContent;
   boton.disabled=true;boton.textContent="⏳ Buscando…";
   sel.replaceChildren(new Option("Buscando…",""));
   estado.textContent="🔎 Consultando tu confirmación…";
   try{
-    const data=await samanthaRequest("/recuerdos/buscar",{telefono,adulto_responsable:adulto});
+    const data=await samanthaRequest("/recuerdos/buscar",{telefono});
     if(version!==busquedaRecuerdoVersion)return;
-    if(!data.encontrado)throw new Error("No encontramos una confirmación con ese teléfono y nombre del adulto.");
+    if(!data.encontrado)throw new Error("No encontramos una confirmación con ese teléfono.");
     ninosFamiliaRecuerdo=Array.isArray(data.ninos)?data.ninos:[];
     if(!ninosFamiliaRecuerdo.length)throw new Error("Esta confirmación no tiene niños registrados.");
     familiaRecuerdoId=data.familia_id;
@@ -1855,7 +1852,6 @@ async function guardarRecuerdoSamantha(){
   const estado=document.getElementById("estadoRecuerdoSamantha");
   const boton=document.querySelector(".btn-guardar-recuerdo");
   const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
-  const adultoResponsable=document.getElementById("recuerdoAdulto").value.trim();
   const selNino=document.getElementById("recuerdoNombreNino");
   const idx=Number(selNino?.value);
   const ninoSeleccionado=selNino?.value!=="" && Number.isInteger(idx)?ninosFamiliaRecuerdo[idx]:null;
@@ -1894,12 +1890,12 @@ async function guardarRecuerdoSamantha(){
     estado.textContent="⏳ Foto subida. Guardando el mensaje...";
 
     await samanthaRequest("/recuerdos",{
-      telefono,adulto_responsable:adultoResponsable,
+      telefono,
       nino_indice:idx,foto_url:ruta,mensaje,autoriza_publicacion:true
     });
 
     estado.textContent="🌸 Recuerdo enviado. Quedó pendiente de aprobación antes de aparecer en el libro de Samantha.";
-    ["recuerdoTelefono","recuerdoAdulto","recuerdoEdadNino","recuerdoMensaje"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
+    ["recuerdoTelefono","recuerdoEdadNino","recuerdoMensaje"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
     const sn=document.getElementById("recuerdoNombreNino"); if(sn){sn.innerHTML='<option value="">Primero busca por teléfono</option>';sn.disabled=true;}
     familiaRecuerdoId=null; ninosFamiliaRecuerdo=[];
     const fi=document.getElementById("recuerdoFoto"); if(fi)fi.value="";
