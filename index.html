@@ -1802,33 +1802,45 @@ function invalidarBusquedaRecuerdo(){
 }
 
 async function buscarFamiliaRecuerdo(){
-  const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
   const estado=document.getElementById("estadoRecuerdoSamantha");
+  const boton=document.querySelector(".btn-buscar-familia");
   const sel=document.getElementById("recuerdoNombreNino");
   const edad=document.getElementById("recuerdoEdadNino");
-  familiaRecuerdoId=null; ninosFamiliaRecuerdo=[];
-  if(sel){sel.innerHTML='<option value="">Buscando...</option>';sel.disabled=true;}
-  if(edad) edad.value="";
-  if(!telefono){estado.textContent="⚠️ Escribe el teléfono usado en la confirmación.";return;}
-  const adulto=document.getElementById("recuerdoAdulto").value.trim();
-  if(!adulto){estado.textContent="⚠️ Escribe el nombre del adulto responsable.";return;}
+  if(boton && estado)boton.insertAdjacentElement("afterend",estado);
+  const telefono=(document.getElementById("recuerdoTelefono")?.value||"").trim();
+  const adulto=(document.getElementById("recuerdoAdulto")?.value||"").trim();
+  familiaRecuerdoId=null;ninosFamiliaRecuerdo=[];
+  sel.replaceChildren(new Option("Primero busca tu confirmación",""));sel.disabled=true;edad.value="";
+  if(!telefono || !adulto){estado.textContent="⚠️ Completa el teléfono y el nombre del adulto de la misma confirmación.";return;}
   const version=++busquedaRecuerdoVersion;
-  estado.textContent="🔎 Buscando la confirmación...";
+  const textoBoton=boton.textContent;
+  boton.disabled=true;boton.textContent="⏳ Buscando…";
+  sel.replaceChildren(new Option("Buscando…",""));
+  estado.textContent="🔎 Consultando tu confirmación…";
   try{
     const data=await samanthaRequest("/recuerdos/buscar",{telefono,adulto_responsable:adulto});
     if(version!==busquedaRecuerdoVersion)return;
-    if(!data || !data.encontrado){
-      if(sel) sel.innerHTML='<option value="">No se encontró la confirmación</option>';
-      estado.textContent="⚠️ No encontramos una confirmación con ese teléfono."; return;
-    }
-    familiaRecuerdoId=data.familia_id;
+    if(!data.encontrado)throw new Error("No encontramos una confirmación con ese teléfono y nombre del adulto.");
     ninosFamiliaRecuerdo=Array.isArray(data.ninos)?data.ninos:[];
-    if(!ninosFamiliaRecuerdo.length){estado.textContent="⚠️ Esta confirmación no tiene niños registrados.";return;}
+    if(!ninosFamiliaRecuerdo.length)throw new Error("Esta confirmación no tiene niños registrados.");
+    familiaRecuerdoId=data.familia_id;
     sel.replaceChildren(new Option("Selecciona el niño",""),...ninosFamiliaRecuerdo.map((n,i)=>new Option(n.nombre||"Niño",String(i))));
     sel.disabled=false;
     if(ninosFamiliaRecuerdo.length===1){sel.value="0";seleccionarNinoRecuerdo();}
-    estado.textContent="✅ Confirmación encontrada. Selecciona el niño y agrega su foto y mensaje.";
-  }catch(err){if(version!==busquedaRecuerdoVersion)return;console.error(err);estado.textContent="❌ "+err.message;}
+    estado.textContent="✅ Confirmación encontrada. Selecciona al niño y agrega su foto y mensaje.";
+  }catch(err){
+    if(version!==busquedaRecuerdoVersion)return;
+    familiaRecuerdoId=null;ninosFamiliaRecuerdo=[];
+    sel.replaceChildren(new Option("No se encontró la confirmación",""));sel.disabled=true;
+    estado.textContent=err.name==="TimeoutError" || err.name==="AbortError"
+      ?"⚠️ La consulta tardó demasiado. Pulsa Buscar mis niños para reintentar."
+      :err instanceof TypeError
+      ?"❌ No se pudo conectar. Revisa tu conexión y vuelve a buscar."
+      :"❌ "+(err.message||"No se pudo consultar la confirmación.");
+  }finally{
+    boton.disabled=false;boton.textContent=textoBoton;
+    if(version===busquedaRecuerdoVersion)estado.scrollIntoView({block:"nearest",behavior:"smooth"});
+  }
 }
 function seleccionarNinoRecuerdo(){
   const sel=document.getElementById("recuerdoNombreNino");
