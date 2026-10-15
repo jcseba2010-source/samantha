@@ -819,7 +819,17 @@ html,body { scroll-behavior:smooth; }
 .family-swipe-hint{display:none;color:#795c63;font-size:13px;text-align:center}
 @media(max-width:900px){.family-swipe-hint{display:block}#familyTreePage .family-wrap{padding:14px 10px}}
 </style>
-</head>
+<style id="family-title-photo-controls">
+#familyTreePage .family-hero{background:linear-gradient(135deg,#fff5eb,#fff0f6 55%,#eee9fa);padding:28px 18px 24px}
+#familyTreePage .family-hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(28px,4.5vw,46px);font-weight:700;line-height:1.2;letter-spacing:.3px;color:#74464b;background:none;text-shadow:none;box-shadow:none;border-radius:0;padding:8px 18px 15px;border-bottom:2px solid #d7b28d;position:relative;margin:0 0 12px}
+#familyTreePage .family-hero h1:before{content:"🌿";display:inline-block;font-size:.6em;vertical-align:middle;margin-right:12px}
+#familyTreePage .family-hero p{font-size:15px;line-height:1.5;color:#936577;margin-top:8px}
+.family-change-photo{display:block;margin:10px auto 0;border:1px solid #dbc5d0;border-radius:999px;background:#fffafc;color:#864963;padding:6px 12px;font:700 12px system-ui;cursor:pointer}
+.family-change-photo:hover{background:#f8e7ef}
+.family-change-photo:focus-visible{outline:3px solid #8150db;outline-offset:2px}
+#familyPhotoStatus{text-align:center;color:#78485d;margin:12px 20px;min-height:20px;font-weight:700}
+.family-root{bottom:8px}
+</style></head>
 <body>
 
 <div id="coverEntry" aria-label="Portada del libro de Adalayn Samantha">
@@ -924,27 +934,33 @@ html,body { scroll-behavior:smooth; }
  <div class="placeholder" data-family-photo="mama" role="button" tabindex="0" aria-label="Agregar foto de Neyla Militza"><span>💗</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Mamá</div>
  <h3>Neyla Militza</h3><p class="member-lastname">Caballero Gonzales</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('mama')">📷 Cambiar foto</button>
  </article><article class="person family-member member-papa">
  <div class="placeholder" data-family-photo="papa" role="button" tabindex="0" aria-label="Agregar foto de Julio Cesar"><span>💙</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Papá</div>
  <h3>Julio Cesar</h3><p class="member-lastname">Contreras Vargas</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('papa')">📷 Cambiar foto</button>
  </article></div>
       <div class="family-children"><article class="person family-member member-andrey">
  <div class="placeholder" data-family-photo="andrey" role="button" tabindex="0" aria-label="Agregar foto de Andrey Sebastián"><span>👦</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Mi hermano</div>
  <h3>Andrey Sebastián</h3><p class="member-lastname">Contreras Caballero</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('andrey')">📷 Cambiar foto</button>
  </article><article class="person family-member member-samuel">
  <div class="placeholder" data-family-photo="samuel" role="button" tabindex="0" aria-label="Agregar foto de Samuel Alejandro"><span>👦</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Mi hermano</div>
  <h3>Samuel Alejandro</h3><p class="member-lastname">Contreras Caballero</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('samuel')">📷 Cambiar foto</button>
  </article><article class="person family-member member-estefania">
  <div class="placeholder" data-family-photo="estefania" role="button" tabindex="0" aria-label="Agregar foto de Yuliana Estefanía"><span>🌸</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Mi hermana y madrina</div>
  <h3>Yuliana Estefanía</h3><p class="member-dedication">Mi querida hermana y madrina</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('estefania')">📷 Cambiar foto</button>
  </article><article class="person family-member member-adalayn">
  <div class="placeholder" data-family-photo="adalayn" role="button" tabindex="0" aria-label="Agregar foto de Adalayn Samantha"><span>👶🏻</span><small class="photo-hint">Agregar foto</small></div>
  <div class="member-ribbon">Aquí estoy yo</div>
  <h3>Adalayn Samantha</h3><p class="member-lastname">Contreras Caballero</p><p class="member-dedication">La princesa de la familia</p>
+ <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('adalayn')">📷 Cambiar foto</button>
  </article></div>
       <div class="family-root">🌿 Nuestras raíces, mi historia 🌿</div>
     </div>
@@ -956,9 +972,11 @@ html,body { scroll-behavior:smooth; }
       <div class="family-photo-box" data-family-photo="familiar">
         👨‍👩‍👧‍👦 Toca aquí para agregar la foto familiar
       </div>
+      <button type="button" class="family-change-photo" onclick="elegirFotoFamiliar('familiar')">📷 Cambiar foto familiar</button>
     </div>
 
-    <div class="family-actions">
+    <p id="familyPhotoStatus" role="status"></p>
+<div class="family-actions">
       <button onclick="hideFamilyTree()">← Volver al libro</button>
       <button onclick="showBirthPage()">🎀 Ir a Mi Nacimiento</button>
     </div>
@@ -1426,6 +1444,11 @@ function hideFamilyTree(){
   document.querySelector('.shell').style.display='';
   window.scrollTo(0,0);
 }
+function elegirFotoFamiliar(tipo){
+  familyPhotoType=tipo;
+  const input=document.getElementById('familyPhotoInput');
+  input.value='';input.click();
+}
 function familyKey(){return 'adalayn_family_tree';}
 function familyLabel(k){
   return {mama:'Mamá',papa:'Papá',andrey:'Andrey',samuel:'Samuel',estefania:'Estefanía',adalayn:'Adalayn Samantha',familiar:'Foto familiar'}[k]||k;
@@ -1443,20 +1466,28 @@ function loadFamilyTree(){
 document.querySelectorAll('[data-family-photo]').forEach(box=>{
   box.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();box.click();}});
   box.addEventListener('click',()=>{
-    familyPhotoType=box.dataset.familyPhoto;
-    const inp=document.getElementById('familyPhotoInput');
-    inp.value=''; inp.click();
+    elegirFotoFamiliar(box.dataset.familyPhoto);
   });
 });
 document.getElementById('familyPhotoInput').addEventListener('change',function(){
   const f=this.files[0]; if(!f)return;
+  const estado=document.getElementById('familyPhotoStatus');
+  const tipo=familyPhotoType;
+  if(!f.type.startsWith('image/')){estado.textContent='Selecciona un archivo de imagen.';return;}
+  estado.textContent='Guardando la fotografía…';
   const reader=new FileReader();
   reader.onload=e=>{
-    let d={};try{d=JSON.parse(localStorage.getItem(familyKey())||'{}')}catch(x){}
-    d[familyPhotoType]=e.target.result;
-    localStorage.setItem(familyKey(),JSON.stringify(d));
-    loadFamilyTree();
+    try{
+      let d={};try{d=JSON.parse(localStorage.getItem(familyKey())||'{}')}catch(x){}
+      d[tipo]=e.target.result;
+      localStorage.setItem(familyKey(),JSON.stringify(d));
+      loadFamilyTree();
+      estado.textContent='✅ Foto de '+familyLabel(tipo)+' actualizada.';
+    }catch(error){
+      estado.textContent='No se pudo guardar la foto. Prueba con una imagen de menor tamaño.';
+    }
   };
+  reader.onerror=()=>{estado.textContent='No se pudo leer la imagen. Selecciona otra fotografía.';};
   reader.readAsDataURL(f);
 });
 </script>
