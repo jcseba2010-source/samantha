@@ -1294,12 +1294,17 @@ function openMemoryBook(){
 let birthPhotoType=null;
 
 function showBirthPage(){
+  document.getElementById('primerAnitoPage').style.display='none';
+  const family=document.getElementById('familyTreePage');
+  family.classList.remove('active');family.style.display='none';
+  document.getElementById('birthPage').style.display='block';
   document.querySelector('.shell').style.display='none';
   document.getElementById('birthPage').classList.add('active');
   loadBirthData();
   window.scrollTo(0,0);
 }
 function hideBirthPage(){
+  document.getElementById('birthPage').style.display='none';
   document.getElementById('birthPage').classList.remove('active');
   document.querySelector('.shell').style.display='';
   window.scrollTo(0,0);
@@ -1361,6 +1366,9 @@ document.getElementById('birthPhotoInput').addEventListener('change',function(){
 let familyPhotoType=null;
 
 function showFamilyTree(){
+  document.getElementById('primerAnitoPage').style.display='none';
+  document.getElementById('birthPage').style.display='none';
+  document.getElementById('familyTreePage').style.display='block';
   document.querySelector('.shell').style.display='none';
   const bp=document.getElementById('birthPage'); if(bp) bp.classList.remove('active');
   document.getElementById('familyTreePage').classList.add('active');
@@ -1368,6 +1376,7 @@ function showFamilyTree(){
   window.scrollTo(0,0);
 }
 function hideFamilyTree(){
+  document.getElementById('familyTreePage').style.display='none';
   document.getElementById('familyTreePage').classList.remove('active');
   document.querySelector('.shell').style.display='';
   window.scrollTo(0,0);
